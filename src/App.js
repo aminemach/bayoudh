@@ -1,6 +1,9 @@
 import './App.css';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import AnimatedCursor from 'react-animated-cursor';
+import LoadingSplash from './components/LoadingSplash';
 import Header from './layouts/Header';
 import Home from './pages/Home';
 import Architecture from './pages/Architecture';
@@ -8,6 +11,16 @@ import InteriorDesign from './pages/InteriorDesign';
 import About from './pages/About';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); // Show splash for 3 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Router>
       <div className="App">
@@ -34,13 +47,22 @@ function App() {
             '.masonry-item'
           ]}
         />
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/architecture" element={<Architecture />} />
-          <Route path="/interior-design" element={<InteriorDesign />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
+        
+        <AnimatePresence>
+          {isLoading && <LoadingSplash />}
+        </AnimatePresence>
+        
+        {!isLoading && (
+          <>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/architecture" element={<Architecture />} />
+              <Route path="/interior-design" element={<InteriorDesign />} />
+              <Route path="/about" element={<About />} />
+            </Routes>
+          </>
+        )}
       </div>
     </Router>
   );
